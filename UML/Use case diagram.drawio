@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2024-02-27T15:44:04.436Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="z5d9ZusJb0qms4uVfeAl" version="23.1.5" type="device">
+<mxfile host="Electron" modified="2024-02-29T18:43:38.508Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="Fu4pf2dw9LaQfUsJYCVH" version="23.1.5" type="device">
   <diagram name="Page-1" id="GmKOVnu1HUBhw32VolcF">
-    <mxGraphModel dx="1411" dy="884" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="652" dy="868" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -8,22 +8,25 @@
           <mxGeometry x="160" y="110" width="640" height="640" as="geometry" />
         </mxCell>
         <mxCell id="gjoIWEntqids-umup4c_-12" value="Create a simple shape" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="260" y="360" width="140" height="70" as="geometry" />
+          <mxGeometry x="274" y="490" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="gjoIWEntqids-umup4c_-67" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="gjoIWEntqids-umup4c_-13" target="gjoIWEntqids-umup4c_-12">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="gjoIWEntqids-umup4c_-13" value="Create a rectangle" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="480" y="410" width="140" height="70" as="geometry" />
+          <mxGeometry x="480" y="490" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="gjoIWEntqids-umup4c_-16" value="Move&amp;nbsp;a shape" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="220" y="450" width="140" height="70" as="geometry" />
+          <mxGeometry x="274" y="580" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="gjoIWEntqids-umup4c_-17" value="Resize&amp;nbsp;a shape" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="274" y="540" width="140" height="70" as="geometry" />
+          <mxGeometry x="250" y="670" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="gjoIWEntqids-umup4c_-18" value="Save a file" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="350" y="670" width="140" height="70" as="geometry" />
+          <mxGeometry x="170" y="180" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="gjoIWEntqids-umup4c_-19" value="Restore a file" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="190" y="670" width="140" height="70" as="geometry" />
+          <mxGeometry x="200" y="380" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="gjoIWEntqids-umup4c_-20" value="User" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
           <mxGeometry x="20" y="430" width="30" height="60" as="geometry" />
@@ -68,37 +71,13 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="gjoIWEntqids-umup4c_-37" value="Create an intersection" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="230" y="130" width="140" height="70" as="geometry" />
+          <mxGeometry x="290" y="130" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="gjoIWEntqids-umup4c_-38" value="Create a union" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="550" y="220" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="gjoIWEntqids-umup4c_-39" value="Create a difference" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="540" y="130" width="140" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="gjoIWEntqids-umup4c_-44" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" edge="1" parent="1" source="gjoIWEntqids-umup4c_-37" target="gjoIWEntqids-umup4c_-35">
-          <mxGeometry width="160" relative="1" as="geometry">
-            <mxPoint x="390" y="210" as="sourcePoint" />
-            <mxPoint x="550" y="210" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="gjoIWEntqids-umup4c_-45" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" edge="1" parent="1" source="gjoIWEntqids-umup4c_-39" target="gjoIWEntqids-umup4c_-35">
-          <mxGeometry width="160" relative="1" as="geometry">
-            <mxPoint x="319" y="210" as="sourcePoint" />
-            <mxPoint x="331" y="260" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="gjoIWEntqids-umup4c_-46" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" edge="1" parent="1" source="gjoIWEntqids-umup4c_-38" target="gjoIWEntqids-umup4c_-35">
-          <mxGeometry width="160" relative="1" as="geometry">
-            <mxPoint x="556" y="249" as="sourcePoint" />
-            <mxPoint x="404" y="281" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="gjoIWEntqids-umup4c_-47" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" edge="1" parent="1" source="gjoIWEntqids-umup4c_-13" target="gjoIWEntqids-umup4c_-12">
-          <mxGeometry width="160" relative="1" as="geometry">
-            <mxPoint x="544" y="333" as="sourcePoint" />
-            <mxPoint x="406" y="307" as="targetPoint" />
-          </mxGeometry>
         </mxCell>
         <mxCell id="gjoIWEntqids-umup4c_-49" value="Draw a shape" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="640" y="320" width="140" height="70" as="geometry" />
@@ -131,6 +110,42 @@
             <Array as="points">
               <mxPoint x="660" y="620" />
             </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gjoIWEntqids-umup4c_-61" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" edge="1" parent="1" source="gjoIWEntqids-umup4c_-35" target="gjoIWEntqids-umup4c_-19">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="561" y="272" as="sourcePoint" />
+            <mxPoint x="409" y="288" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gjoIWEntqids-umup4c_-62" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" edge="1" parent="1" source="gjoIWEntqids-umup4c_-12" target="gjoIWEntqids-umup4c_-19">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="324" y="329" as="sourcePoint" />
+            <mxPoint x="296" y="391" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gjoIWEntqids-umup4c_-63" value="" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;" edge="1" parent="1" source="gjoIWEntqids-umup4c_-38" target="gjoIWEntqids-umup4c_-35">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="370" y="380" as="sourcePoint" />
+            <mxPoint x="530" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gjoIWEntqids-umup4c_-64" value="" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;" edge="1" parent="1" source="gjoIWEntqids-umup4c_-39" target="gjoIWEntqids-umup4c_-35">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="561" y="272" as="sourcePoint" />
+            <mxPoint x="409" y="288" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gjoIWEntqids-umup4c_-65" value="" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;" edge="1" parent="1" source="gjoIWEntqids-umup4c_-37" target="gjoIWEntqids-umup4c_-35">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="567" y="198" as="sourcePoint" />
+            <mxPoint x="393" y="272" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gjoIWEntqids-umup4c_-66" value="" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;" edge="1" parent="1" source="gjoIWEntqids-umup4c_-13" target="gjoIWEntqids-umup4c_-12">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="361" y="210" as="sourcePoint" />
+            <mxPoint x="349" y="260" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
