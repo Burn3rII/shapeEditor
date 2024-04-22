@@ -382,7 +382,7 @@ public class MainWindow {
 		menuBar.add(mnFile);
 		
 		JMenuItem mntmOpen = new JMenuItem("Open");
-		mntmOpen.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/folder.png")));
+		//mntmOpen.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/folder.png")));
 		mntmOpen.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        openFile(panel, helpText);
@@ -390,7 +390,7 @@ public class MainWindow {
 		});
 		
 		JMenu mnNew = new JMenu("New");
-		mnNew.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/file.png")));
+		//mnNew.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/file.png")));
 		mnFile.add(mnNew);
 		
 		JMenuItem mntmNewCanvas = new JMenuItem("Canvas");
@@ -419,7 +419,7 @@ public class MainWindow {
 		
 		JMenuItem mntmSave = new JMenuItem("Save");
 		mntmSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
-		mntmSave.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/save.png")));
+		//mntmSave.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/save.png")));
 		mntmSave.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	mousePressed = false;
@@ -447,7 +447,7 @@ public class MainWindow {
 		menuBar.add(mnShapes);
 		
 		JMenuItem mntmPaintColor = new JMenuItem("Paint color");
-		mntmPaintColor.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/paint.png")));
+		//mntmPaintColor.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/paint.png")));
 		mntmPaintColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				selectedColor = JColorChooser.showDialog(frame, "Choose a Color", Color.BLACK);
@@ -462,7 +462,7 @@ public class MainWindow {
 		mnShapes.add(mnInsert);
 		
 		JMenuItem mntmRectangle = new JMenuItem("Rectangle");
-		mntmRectangle.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/rectangle.png")));
+		//mntmRectangle.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/rectangle.png")));
 		mntmRectangle.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
 		mntmRectangle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -475,7 +475,7 @@ public class MainWindow {
 		mnInsert.add(mntmRectangle);
 		
 		JMenuItem mntmOval = new JMenuItem("Oval");
-		mntmOval.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/oval.png")));
+		//mntmOval.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/oval.png")));
 		mntmOval.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mousePressed = false;
@@ -491,7 +491,7 @@ public class MainWindow {
 		mnShapes.add(mnComposition);
 		
 		JMenuItem mntmUnion = new JMenuItem("Union");
-		mntmUnion.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/union.png")));
+		//mntmUnion.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/union.png")));
 		mntmUnion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actualState = SystemState.COMPOSITION;
@@ -506,7 +506,7 @@ public class MainWindow {
 		mnComposition.add(mntmUnion);
 		
 		JMenuItem mntmIntersection = new JMenuItem("Intersection");
-		mntmIntersection.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/intersection.png")));
+		//mntmIntersection.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/intersection.png")));
 		mntmIntersection.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actualState = SystemState.COMPOSITION;
@@ -521,7 +521,7 @@ public class MainWindow {
 		mnComposition.add(mntmIntersection);
 		
 		JMenuItem mntmDifference = new JMenuItem("Difference");
-		mntmDifference.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/difference.png")));
+		//mntmDifference.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/difference.png")));
 		mntmDifference.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actualState = SystemState.COMPOSITION;
@@ -536,7 +536,7 @@ public class MainWindow {
 		mnComposition.add(mntmDifference);
 		
 		JMenuItem mntmSymetricDifference = new JMenuItem("SymetricDifference");
-		mntmSymetricDifference.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/symetricdifference.png")));
+		//mntmSymetricDifference.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/icons/symetricdifference.png")));
 		mntmSymetricDifference.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actualState = SystemState.COMPOSITION;
@@ -913,7 +913,66 @@ public class MainWindow {
 		double h = areas.get(selectedShapeIndex).getBounds2D().getHeight();
 		double scaleX = 1 - dx / w;
 		double scaleY = 1 - dy / h;
+		
+	    
+        double x = areas.get(selectedShapeIndex).getBounds2D().getX();
+        double y = areas.get(selectedShapeIndex).getBounds2D().getY();
+        
 
+		boolean invertResizeW = false;
+		boolean invertResizeH = false;
+		
+        // cas lorsque le resize est trop petit		
+		System.out.println(p);
+		System.out.println(w);
+		System.out.println(x);
+		//System.out.println(dx);
+		if (w <= 2 || h <= 2) {
+			if (w <= 2) {
+				if ((p.x >= x+3) && (resizeType == ResizeType.LEFT || resizeType == ResizeType.TOP_LEFT || resizeType == ResizeType.BOTTOM_LEFT)){
+					invertResizeW = true;
+				}
+				else if ((p.x <= x-2) && (resizeType == ResizeType.RIGHT || resizeType == ResizeType.TOP_RIGHT || resizeType == ResizeType.BOTTOM_RIGHT)) {
+					invertResizeW = true;
+				}
+			}
+			else {
+				if ((p.y >= y+3) && (resizeType == ResizeType.TOP || resizeType == ResizeType.TOP_LEFT || resizeType == ResizeType.TOP_RIGHT)){
+					invertResizeH = true;
+				}
+				else if ((p.y <= y-2) && (resizeType == ResizeType.BOTTOM || resizeType == ResizeType.BOTTOM_LEFT || resizeType == ResizeType.BOTTOM_RIGHT)) {
+					invertResizeH = true;
+				}
+			}
+
+			// c'est la fonction flipResizeType(invertResizeW, invertResizeH) :
+	        if (resizeType == ResizeType.BOTTOM_RIGHT && invertResizeW ){
+	            resizeType = ResizeType.BOTTOM_LEFT;
+	        } else if (resizeType == ResizeType.BOTTOM_LEFT && invertResizeW) {
+	            resizeType = ResizeType.BOTTOM_RIGHT;
+	        } else if (resizeType == ResizeType.BOTTOM_RIGHT && invertResizeH) {
+	            resizeType = ResizeType.TOP_RIGHT;
+	        } else if (resizeType == ResizeType.BOTTOM_LEFT && invertResizeH) {
+	            resizeType = ResizeType.TOP_LEFT;	            
+	        } else if (resizeType == ResizeType.TOP_RIGHT && invertResizeW) {
+	            resizeType = ResizeType.TOP_LEFT;
+	        } else if (resizeType == ResizeType.TOP_LEFT && invertResizeW) {
+	            resizeType = ResizeType.TOP_RIGHT;
+	        } else if (resizeType == ResizeType.TOP_RIGHT && invertResizeH) {
+	            resizeType = ResizeType.BOTTOM_RIGHT;
+	        } else if (resizeType == ResizeType.TOP_LEFT && invertResizeH) {
+	            resizeType = ResizeType.BOTTOM_LEFT;
+	        } else if (resizeType == ResizeType.RIGHT && invertResizeW) {
+	            resizeType = ResizeType.LEFT;
+	        } else if (resizeType == ResizeType.LEFT && invertResizeW) {
+	            resizeType = ResizeType.RIGHT;
+	        } else if (resizeType == ResizeType.BOTTOM && invertResizeH) {
+	            resizeType = ResizeType.TOP;
+	        } else if (resizeType == ResizeType.TOP && invertResizeH) {
+	            resizeType = ResizeType.BOTTOM;
+	        }
+	    }
+		
 	    switch (resizeType) {
 	        case TOP_LEFT:
 	        	transform.translate(dx/2, dy/2);
@@ -924,19 +983,19 @@ public class MainWindow {
 	        case TOP_RIGHT:
 	            transform.translate(dx/2, dy/2);
 	            transform.translate(centerX, centerY);
-	            transform.scale(1 + dx / areas.get(selectedShapeIndex).getBounds2D().getWidth(), scaleY);
+	            transform.scale(1 + dx / w, scaleY);
 	            transform.translate(-centerX, -centerY);
 	            break;
 	        case BOTTOM_LEFT:
 	            transform.translate(dx/2, dy/2);
 	            transform.translate(centerX, centerY);
-	            transform.scale(scaleX, 1 + dy / areas.get(selectedShapeIndex).getBounds2D().getHeight());
+	            transform.scale(scaleX, 1 + dy / h);
 	            transform.translate(-centerX, -centerY);
 	            break;
 	        case BOTTOM_RIGHT:
 	        	transform.translate(dx/2, dy/2);
 	        	transform.translate(centerX, centerY);
-	            transform.scale(1 + dx / areas.get(selectedShapeIndex).getBounds2D().getWidth(), 1 + dy / areas.get(selectedShapeIndex).getBounds2D().getHeight());
+	            transform.scale(1 + dx / w, 1 + dy / h);
 	            transform.translate(-centerX, -centerY);
 	            break;
 	        case TOP:
@@ -948,7 +1007,7 @@ public class MainWindow {
 	        case BOTTOM:
 	        	transform.translate(0, dy/2);
 	        	transform.translate(centerX, centerY);
-	            transform.scale(1, 1 + dy / areas.get(selectedShapeIndex).getBounds2D().getHeight());
+	            transform.scale(1, 1 + dy / h);
 	            transform.translate(-centerX, -centerY);
 	            break;
 	        case LEFT:
@@ -960,7 +1019,7 @@ public class MainWindow {
 	        case RIGHT:
 	        	transform.translate(dx/2, 0);
 	        	transform.translate(centerX, centerY);
-	            transform.scale(1 + dx / areas.get(selectedShapeIndex).getBounds2D().getWidth(), 1);
+	            transform.scale(1 + dx / w, 1);
 	            transform.translate(-centerX, -centerY);
 	            break;
 	    }
@@ -970,14 +1029,28 @@ public class MainWindow {
 	    testShape.transform(transform);
 	    w = testShape.getBounds2D().getWidth();
 		h = testShape.getBounds2D().getHeight();
+		
 	    
-	    if (w > 30 && h > 30) {
+	    if ((w>=1 && h>=1) || (invertResizeW || invertResizeH)){
+	    	//flip_resizeType();
 	    	areas.get(selectedShapeIndex).transform(transform);
 	    	hasSaved = false;
 		}
-
+	    
 	    dragStart = p;
 	}
+	
+	/* création d'une fonction pour tester si un booloean reverseResize peut être true ou false
+	 * private boolean testReverseResize(Point p, w, h) {
+		return true/false;
+	}*/
+	
+	/* création d'une fonction flipResize(Point p, w, h) pour changer le mode actuel de resize 
+	 * en fonction des booleans reverseResize (et donc de la fonction testReverseResize(...) :
+	 * private void flipResize(Point p, double w, double h) {
+	 * 		
+	 * }
+	 */
 
 	private void applySelectedColor(Point point, JPanel panel) {
         for (int i = areas.size() - 1; i >= 0; i--) {
