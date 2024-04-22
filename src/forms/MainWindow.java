@@ -927,9 +927,9 @@ public class MainWindow {
 		System.out.println(w);
 		System.out.println(x);
 		//System.out.println(dx);
-		if (w <= 2 || h <= 2) {
-			if (w <= 2) {
-				if ((p.x >= x+3) && (resizeType == ResizeType.LEFT || resizeType == ResizeType.TOP_LEFT || resizeType == ResizeType.BOTTOM_LEFT)){
+		if (w <= 2.1 || h <= 2.1) {
+			if (w <= 2.1) {
+				if ((p.x >= x+4) && (resizeType == ResizeType.LEFT || resizeType == ResizeType.TOP_LEFT || resizeType == ResizeType.BOTTOM_LEFT)){
 					invertResizeW = true;
 				}
 				else if ((p.x <= x-2) && (resizeType == ResizeType.RIGHT || resizeType == ResizeType.TOP_RIGHT || resizeType == ResizeType.BOTTOM_RIGHT)) {
@@ -937,13 +937,14 @@ public class MainWindow {
 				}
 			}
 			else {
-				if ((p.y >= y+3) && (resizeType == ResizeType.TOP || resizeType == ResizeType.TOP_LEFT || resizeType == ResizeType.TOP_RIGHT)){
+				if ((p.y >= y+4) && (resizeType == ResizeType.TOP || resizeType == ResizeType.TOP_LEFT || resizeType == ResizeType.TOP_RIGHT)){
 					invertResizeH = true;
 				}
 				else if ((p.y <= y-2) && (resizeType == ResizeType.BOTTOM || resizeType == ResizeType.BOTTOM_LEFT || resizeType == ResizeType.BOTTOM_RIGHT)) {
 					invertResizeH = true;
 				}
 			}
+			System.out.println(resizeType);
 
 			// c'est la fonction flipResizeType(invertResizeW, invertResizeH) :
 	        if (resizeType == ResizeType.BOTTOM_RIGHT && invertResizeW ){
@@ -971,6 +972,8 @@ public class MainWindow {
 	        } else if (resizeType == ResizeType.TOP && invertResizeH) {
 	            resizeType = ResizeType.BOTTOM;
 	        }
+			System.out.println(resizeType);
+
 	    }
 		
 	    switch (resizeType) {
@@ -1031,7 +1034,7 @@ public class MainWindow {
 		h = testShape.getBounds2D().getHeight();
 		
 	    
-	    if ((w>=1 && h>=1) || (invertResizeW || invertResizeH)){
+	    if ((w >= 2 && h >= 2) || (invertResizeW || invertResizeH)){
 	    	//flip_resizeType();
 	    	areas.get(selectedShapeIndex).transform(transform);
 	    	hasSaved = false;
