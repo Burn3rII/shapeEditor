@@ -1,8 +1,11 @@
 package forms.managers;
 
 import forms.windowsContents.Panel;
+import forms.exceptions.NotConnectedException;
+import forms.serverrmi.ServerInterface;
 import forms.shapes.GeneralShape;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -19,6 +22,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.rmi.AccessException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 /**
  * @author Simon Antropius
@@ -84,6 +91,74 @@ public class FileManager {
             return false;
         }
     }
+    
+    public boolean saveDistantFile(ServerManager serverManager) throws IOException, NotConnectedException, NumberFormatException, NotBoundException, AccessException, RemoteException, Exception  {
+        if (!StateManager.getServerState()) {
+            throw new NotConnectedException("Application is not connected to the server.");
+        }
+    	
+    	
+        String[] serverConfig = serverManager.fetchServerConfig();
+        String ip = serverConfig[0];
+        int port = Integer.parseInt(serverConfig[1]);
+        ServerInterface stub = (ServerInterface) Naming.lookup("rmi://" + ip + ":" + port + "/Server");
+        List<String> lines = new ArrayList<>();
+        if (panel.getBackgroundImage() == null) { // No image is used as a background
+        	lines.add("Background_Color: " + ((Color) panel.getBackground()).getRGB());
+        } else {
+        	lines.add("Background_Image: " + panel.getBackgroundImagePath());
+        }
+
+        List<GeneralShape> shapes = panel.getShapes();
+        for (GeneralShape shape : shapes) {
+        	lines.add(shape.toTextFormat());
+        }
+
+        stub.saveDistant(lines.toArray(new String[0]));
+        return true;
+    	 /*catch (NumberFormatException e1) {
+	            System.err.println("Could not parse string to an integer: " + e1.toString());
+		        return false;/*
+    		}
+    		/*
+    		int port = Integer.parseInt(serverConfig[1]);
+            //ServerInterface stub = (ServerInterface) Naming.lookup("rmi://localhost:1099/SaveDistant");
+    		ServerInterface stub = (ServerInterface) Naming.lookup("rmi://" + ip + ":" + port + "/Server");
+    		
+            List<String> lines = new ArrayList<>();
+            if (panel.getBackgroundImage() == null) { // No image is used as a background
+            	lines.add("Background_Color: " + ((Color) panel.getBackground()).getRGB());
+            } else {
+            	lines.add("Background_Image: " + panel.getBackgroundImagePath());
+            }
+
+            List<GeneralShape> shapes = panel.getShapes();
+            for (GeneralShape shape : shapes) {
+            	lines.add(shape.toTextFormat());
+            }
+
+            stub.saveDistant(lines.toArray(new String[0]));
+            return true;
+    		*/
+
+    	/*} catch (NotBoundException e) {
+            System.err.println("The specified name is not bound in the RMI registry: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } catch (AccessException e) {
+            System.err.println("Access to the required operation is denied: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } catch (RemoteException e) {
+            System.err.println("Remote method invocation failed: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
+            return false;
+        }*/
+    }
 
     /**
      * Opens a file and loads its content into the panel.
@@ -92,7 +167,7 @@ public class FileManager {
      * @throws FileNotFoundException If the file to open is not found.
      * @throws IOException If an I/O exception occurs during file reading.
      */
-    public boolean openFile() throws Exception, FileNotFoundException, IOException {
+    public boolean openFile() throws Exception, FileNotFoundException, IOException, NumberFormatException {
         JFileChooser fileChooser = new JFileChooser();
         int result = fileChooser.showOpenDialog(null);
 
@@ -131,6 +206,62 @@ public class FileManager {
 
             return true;
         } else {
+            return false;
+        }
+    }
+    
+    public boolean openDistantFile(ServerManager serverManager) throws Exception, FileNotFoundException, IOException {
+        if (!StateManager.getServerState()) {
+            throw new NotConnectedException("Application is not connected to the server.");
+        }
+    	
+    	try {
+    		String[] serverConfig = serverManager.fetchServerConfig();
+    		String ip = serverConfig[0];
+    		int port = Integer.parseInt(serverConfig[1]); 
+            //ServerInterface stub = (ServerInterface) Naming.lookup("rmi://localhost:1099/SaveDistant");
+    		ServerInterface stub = (ServerInterface) Naming.lookup("rmi://" + ip + ":" + port + "/Server");
+
+            
+            String[] lines = stub.loadDistant();
+            if (lines == null || lines.length == 0) {
+                throw new FileNotFoundException("File not found on the server.");
+            }
+            
+            panel.reset();
+
+            for (String line : lines) {
+                if (line.startsWith("Background_Color: ")) {
+                	try {
+                        int rgb = Integer.parseInt(line.substring(18));
+                        Color bgColor = new Color(rgb);
+                        panel.setBackground(bgColor);
+                	} catch (NumberFormatException e1) {
+    		            System.err.println("Could not parse string to an integer: " + e1.toString());
+    			        return false;
+                	}
+
+                } else if (line.startsWith("Background_Image: ")) {
+                    String imagePath = line.substring(18);
+                    BufferedImage backgroundImage = ImageIO.read(new File(imagePath));
+                    if (backgroundImage != null) { 
+                        panel.setBackgroundImage(backgroundImage, imagePath); 
+                    } else panel.setBackground(Color.WHITE);
+                } else {
+                    GeneralShape shape = GeneralShape.fromTextFormat(line);
+                    if (shape != null) {
+                        panel.addShape(shape);
+                    }
+                }
+            }
+            return true;
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found on the server.");
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
             return false;
         }
     }

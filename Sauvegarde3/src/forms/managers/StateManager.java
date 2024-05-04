@@ -52,6 +52,8 @@ public class StateManager {
     }
     private ShapeType shapeToCreateType = null;
     
+    private static boolean serverState = false;
+    
     /***************************************************************************
 	 * Constructors.
 	 **************************************************************************/
@@ -231,6 +233,14 @@ public class StateManager {
      */
 	public ShapeType getShapeToCreateType() {
 		return shapeToCreateType;
+	}
+
+	public static boolean getServerState() {
+		return serverState;
+	}
+
+	public static void setServerState(boolean serverEnabled) {
+		serverState = serverEnabled;
 	}
 
 	/**
