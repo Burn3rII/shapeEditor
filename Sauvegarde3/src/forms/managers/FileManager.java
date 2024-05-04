@@ -101,7 +101,7 @@ public class FileManager {
         String[] serverConfig = serverManager.fetchServerConfig();
         String ip = serverConfig[0];
         int port = Integer.parseInt(serverConfig[1]);
-        ServerInterface stub = (ServerInterface) Naming.lookup("rmi://" + ip + ":" + port + "/Server");
+        ServerInterface stub = (ServerInterface) Naming.lookup("rmi://" + ip + ":" + port + "/serverFile");
         List<String> lines = new ArrayList<>();
         if (panel.getBackgroundImage() == null) { // No image is used as a background
         	lines.add("Background_Color: " + ((Color) panel.getBackground()).getRGB());
@@ -220,7 +220,7 @@ public class FileManager {
     		String ip = serverConfig[0];
     		int port = Integer.parseInt(serverConfig[1]); 
             //ServerInterface stub = (ServerInterface) Naming.lookup("rmi://localhost:1099/SaveDistant");
-    		ServerInterface stub = (ServerInterface) Naming.lookup("rmi://" + ip + ":" + port + "/Server");
+    		ServerInterface stub = (ServerInterface) Naming.lookup("rmi://" + ip + ":" + port + "/serverFile");
 
             
             String[] lines = stub.loadDistant();
@@ -259,8 +259,12 @@ public class FileManager {
             System.err.println("File not found on the server.");
             e.printStackTrace();
             return false;
-        } catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
+        } catch (RemoteException e) {
+            if (e.getCause() instanceof FileNotFoundException) {
+                System.err.println("File not found on the server.");
+            } else {
+                System.err.println("Client exception: " + e.toString());
+            }
             e.printStackTrace();
             return false;
         }

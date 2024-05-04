@@ -2,6 +2,7 @@ package forms.serverrmi;
         
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,7 +17,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Server implements ServerInterface {
-        
+    
+	static Registry servRegistry = null;
+	
     public Server() {}
     
     public static void main(String[] args) {
@@ -40,7 +43,8 @@ public class Server implements ServerInterface {
 
             // Start the registry on the entered port and bind the stub to it
             Registry registry = LocateRegistry.createRegistry(port);
-            registry.bind("Server", stub);
+            servRegistry = registry;
+            servRegistry.bind("serverFile", stub);
 
             System.out.println("Server ready on port " + port);
 			
@@ -50,66 +54,69 @@ public class Server implements ServerInterface {
         }
     }
     
-	public static void startServer(int port) throws Exception {
+    public static void startServer(int port) throws Exception, RemoteException {
         // Create and export the remote object
         Server obj = new Server();
         ServerInterface stub = (ServerInterface) UnicastRemoteObject.exportObject(obj, 0);
 
         // Start the registry on the entered port and bind the stub to it
         Registry registry = LocateRegistry.createRegistry(port);
-        registry.bind("Server", stub);
-		
-        // Add a shutdown hook to unbind the remote object and stop the registry
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run(){
-                try {
-					registry.unbind("SaveDistant");
-					UnicastRemoteObject.unexportObject(registry, true);
-				} catch (AccessException e) {
-					System.err.println("Error stopping server (AccessException): " + e.toString());
-				} catch (RemoteException e) {
-					System.err.println("Error stopping server (RemoteException): " + e.toString());
-				} catch (NotBoundException e) {
-					System.err.println("Error stopping server (NotBoundException): " + e.toString());
-				}
-                System.out.println("Server stopped");
-            }
-        });
+        servRegistry = registry;
+        servRegistry.bind("serverFile", stub);
         
         System.out.println("Server ready on port " + port);
 	}
     
-    public void saveDistant(String[] strings) throws RemoteException  {
+	@Override
+    public void saveDistant(String[] strings) throws RemoteException, IOException  {
         try {
-            String filename = "shapeEditor-main/Sauvegarde3/ServerFiles/RMIfile1";
+        	String path = "shapeEditor-main/Sauvegarde3/ServerFiles/";
+            String filename = "RMIfile1";
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(path + filename))) {
                 for (String str : strings) {
                     writer.write(str);
                     writer.newLine();
                 }
+            } catch (FileNotFoundException e) {
+            	throw new IOException("Error finding file", e);
+            } catch (IOException e){
+            	e.printStackTrace();
+                throw new RemoteException("Error saving file", e);
             }
-        } catch (IOException e){
-            throw new RemoteException("Error saving file", e);
-        }
+        } catch (RemoteException e){
+            e.printStackTrace();
+            throw e;
+        } 
     }
 
-    public String[] loadDistant() throws RemoteException {
-        try {
-            String filename = "shapeEditor-main/Sauvegarde3/ServerFiles/RMIfile1";
-            List<String> lines = new ArrayList<>();
+	@Override
+	public String[] loadDistant() throws RemoteException, FileNotFoundException {
+	    try {
+	        String path = "shapeEditor-main/Sauvegarde3/ServerFiles/";
+	        String filename = "RMIfile1";
+	        List<String> lines = new ArrayList<>();
 
-            try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    lines.add(line);
-                }
-            }
-
-            return lines.toArray(new String[0]);
-        } catch (IOException e) {
-            throw new RemoteException("Error loading file", e);
-        }
+	        try (BufferedReader reader = new BufferedReader(new FileReader(path + filename))) {
+	            String line;
+	            while ((line = reader.readLine()) != null) {
+	                lines.add(line);
+	            }
+	        }
+	        
+	        return lines.toArray(new String[0]);
+	    } catch (FileNotFoundException e) {
+	        throw new RemoteException("Error finding file", e);
+	    } catch (IOException e) {
+	        throw new RemoteException("Error loading file", e);
+	    }
+	}
+    
+    public static void close() throws AccessException, RemoteException, NotBoundException {
+    	servRegistry.unbind("serverFile");
+    	UnicastRemoteObject.unexportObject(servRegistry, true);
+    	servRegistry = null;
+    	System.out.println("Server stopped");
     }
 
 }

@@ -82,6 +82,9 @@ public class MainWindow extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
+				if (StateManager.getServerState() == true) {
+					serverManager.closeServer();
+				}
 				windowManager.manageClosure();
 			}
 		});
@@ -180,7 +183,6 @@ public class MainWindow extends JFrame {
 		mnOpen.add(mntmOpenLocally);
 		
 		JMenuItem mntmOpenDistant = new JMenuItem("File on a distant machine");
-		
 			mntmOpenDistant.addActionListener(new ActionListener() {
 			    public void actionPerformed(ActionEvent e) {
 			    	if (StateManager.getServerState() == true) {
@@ -208,7 +210,6 @@ public class MainWindow extends JFrame {
 			    	}
 			    }
 			});
-		
 		mntmOpenDistant.setSelectedIcon(null);
 		mnOpen.add(mntmOpenDistant);
 		

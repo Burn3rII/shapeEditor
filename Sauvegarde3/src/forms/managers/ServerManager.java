@@ -3,6 +3,9 @@ package forms.managers;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.net.Socket;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -93,6 +96,18 @@ public class ServerManager {
 	
 	public String[] fetchServerConfig() {
 		return new String[] {ipServer, Integer.toString(portServer)};
+	}
+
+	public void closeServer() {
+		try {
+			Server.close();
+		} catch (AccessException e) {
+			System.err.println("Error stopping server (AccessException): " + e.toString());
+		} catch (RemoteException e) {
+			System.err.println("Error stopping server (RemoteException): " + e.toString());
+		} catch (NotBoundException e) {
+			System.err.println("Error stopping server (NotBoundException): " + e.toString());
+		}
 	}
 
 }
