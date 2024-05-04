@@ -2,10 +2,10 @@ package forms;
 
 import forms.managers.CursorManager;
 import forms.managers.FileManager;
+import forms.managers.ServerManager;
 import forms.managers.StateManager;
 import forms.managers.WindowManager;
 import forms.windowsContents.Panel;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -49,6 +49,7 @@ public class MainWindow extends JFrame {
 	private WindowManager windowManager;
 	private CursorManager cursorManager;
 	private FileManager fileManager;
+	private ServerManager serverManager = new ServerManager();
 	
 	/***************************************************************************
 	 * Constructors.
@@ -145,9 +146,13 @@ public class MainWindow extends JFrame {
 		});
 		mnNew.add(mntmNewWindow);
 		
-		JMenuItem mntmOpen = new JMenuItem("Open");
-		mntmOpen.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/resources/icons/folder.png")));
-		mntmOpen.addActionListener(new ActionListener() {
+		JMenu mnOpen = new JMenu("Open");
+		mnOpen.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/resources/icons/folder.png")));
+		mnOpen.setSelectedIcon(null);
+		mnFile.add(mnOpen);
+		
+		JMenuItem mntmOpenLocally = new JMenuItem("Local file");
+		mntmOpenLocally.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	panel.repaint();
 		    	try {
@@ -165,16 +170,41 @@ public class MainWindow extends JFrame {
 		    	
 		    }
 		});
-		mntmOpen.setSelectedIcon(null);
-		mnFile.add(mntmOpen);
+		mntmOpenLocally.setSelectedIcon(null);
+		mnOpen.add(mntmOpenLocally);
+		
+		JMenuItem mntmOpenDistant = new JMenuItem("File on a distant machine");
+		mntmOpenDistant.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	panel.repaint();
+		    	try {
+		    		if (fileManager.openDistantFile(serverManager)) {
+		    			helpText.setText("File restored from the server.");
+		    			panel.repaint();
+		    		}
+		    	} catch (FileNotFoundException ex) {
+		    		helpText.setText("Error: Failed to restore file. FileNotFoundException occurred.");
+		    	} catch (IOException ex) {
+	                helpText.setText("Error: Failed to restore file. IOException occurred.");
+	            } catch (Exception ex) {
+	                helpText.setText("Error: Failed to restore file. Unknown error occurred.");
+	            }
+		    	
+		    }
+		});
+		mntmOpenDistant.setSelectedIcon(null);
+		mnOpen.add(mntmOpenDistant);
 		
 		JMenu mnSave = new JMenu("Save");
 		mnSave.setIcon(new ImageIcon(MainWindow.class.getResource("/forms/resources/icons/save.png")));
 		mnFile.add(mnSave);
 		
-		JMenuItem mntmSaveFile = new JMenuItem("Save file");
-		mntmSaveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
-		mntmSaveFile.addActionListener(new ActionListener() {
+		JMenu mnSaveFile = new JMenu("Save file");
+		mnSave.add(mnSaveFile);
+		
+		JMenuItem mntmSaveLocally = new JMenuItem("Save locally");
+		mntmSaveLocally.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+		mntmSaveLocally.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	panel.repaint();
 		    	panel.setMousePressed(false);
@@ -190,8 +220,25 @@ public class MainWindow extends JFrame {
 	            }
 		    }
 		});
-		mntmSaveFile.setSelectedIcon(null);
-		mnSave.add(mntmSaveFile);
+		mntmSaveLocally.setSelectedIcon(null);
+		mnSaveFile.add(mntmSaveLocally);
+		
+		JMenuItem mntmSaveDistant = new JMenuItem("Save on a distant machine");
+		mntmSaveDistant.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	panel.repaint();
+		    	panel.setMousePressed(false);
+		    	try {
+		    		if (fileManager.saveDistantFile(serverManager)) {
+		                helpText.setText("File saved on a distant machine.");
+		    		}
+		    	} catch (Exception ex) {
+	                helpText.setText("Error: Failed to save file. Unknown error occurred.");
+	            }
+		    }
+		});
+		mntmSaveDistant.setSelectedIcon(null);
+		mnSaveFile.add(mntmSaveDistant);
 		
 		JMenuItem mntmSaveAsImage = new JMenuItem("Save as image");
 		mntmSaveAsImage.addActionListener(new ActionListener() {
@@ -211,6 +258,63 @@ public class MainWindow extends JFrame {
 		});
 		mntmSaveAsImage.setSelectedIcon(null);
 		mnSave.add(mntmSaveAsImage);
+		
+		JMenuItem mntmStartServer = new JMenuItem("Start Server");
+		mntmStartServer.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	if (serverManager.createServer()) {
+		    		StateManager.setServerState(true);
+		    		helpText.setText("Server started and online.");
+		    	} else {
+		            StateManager.setServerState(false);
+		            helpText.setText("Error while starting the server.");
+		    	}
+		    	
+		    	/*
+		        String portString = JOptionPane.showInputDialog("Enter a port number between 1024-65535 (default is 1099):");
+		        String ip = "127.0.0.1"; // Local host IP
+		        try {
+		        	int port = Integer.parseInt(portString);
+		        	Server.startServer(port);
+			    	ServerManager serverManager = new ServerManager();
+			        serverManager.connectServer(ip, port); //If the server is created then the application automatically connects to the local host
+			        StateManager.setServerState(true);
+		        } catch (NumberFormatException e1) {
+		            System.err.println("Could not parse string to an integer: " + e1.toString());
+			        StateManager.setServerState(false);
+		        }*/
+		    }
+		});
+		mntmSaveAsImage.setSelectedIcon(null);
+		mnFile.add(mntmStartServer);
+
+		JMenuItem mntmConnectToServer = new JMenuItem("Connect to Server");
+		mntmConnectToServer.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	if (serverManager.connectServer()) {
+		    		StateManager.setServerState(true);
+		    		helpText.setText("Connected to server (ip:" + serverManager.fetchServerConfig()[0] + ", port:" + serverManager.fetchServerConfig()[1] + ").");
+		    	} else {
+		    		StateManager.setServerState(false);
+                	helpText.setText("Problem while connecting to the server (server not created or other problem).");
+		    	}
+		    }
+		    
+		    	
+		        /*String ip = JOptionPane.showInputDialog("Enter the server IP address:");
+		        String portString = JOptionPane.showInputDialog("Enter the server port number 1024-65535 (default is 1099):");
+		        try {
+		        	int port = Integer.parseInt(portString);
+			    	ServerManager serverManager = new ServerManager();
+			        serverManager.connectServer(ip, port);
+			        StateManager.setServerState(true);
+		        } catch (NumberFormatException e1) {
+		            System.err.println("Could not parse string to an integer: " + e1.toString());
+		        }
+		    }*/
+		});
+		mntmSaveAsImage.setSelectedIcon(null);
+		mnFile.add(mntmConnectToServer);
 		
 		JMenu mnCanvas = new JMenu("Canvas");
 		menuBar.add(mnCanvas);
