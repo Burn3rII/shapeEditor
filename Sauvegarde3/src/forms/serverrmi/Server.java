@@ -5,7 +5,8 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.Socket;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -54,8 +55,34 @@ public class Server implements ServerInterface {
         }
     }
     
-	public static void startServer(int port) {
-        try {
+	public static void startServer(int port) throws Exception {
+        // Create and export the remote object
+        Server obj = new Server();
+        ServerInterface stub = (ServerInterface) UnicastRemoteObject.exportObject(obj, 0);
+
+        // Start the registry on the entered port and bind the stub to it
+        Registry registry = LocateRegistry.createRegistry(port);
+        registry.bind("Server", stub);
+		
+        // Add a shutdown hook to unbind the remote object and stop the registry
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run(){
+                try {
+					registry.unbind("SaveDistant");
+					UnicastRemoteObject.unexportObject(registry, true);
+				} catch (AccessException e) {
+					System.err.println("Error stopping server (AccessException): " + e.toString());
+				} catch (RemoteException e) {
+					System.err.println("Error stopping server (RemoteException): " + e.toString());
+				} catch (NotBoundException e) {
+					System.err.println("Error stopping server (NotBoundException): " + e.toString());
+				}
+                System.out.println("Server stopped");
+            }
+        });
+        
+        System.out.println("Server ready on port " + port);
+        /*try {
             // Create and export the remote object
             Server obj = new Server();
             ServerInterface stub = (ServerInterface) UnicastRemoteObject.exportObject(obj, 0);
@@ -67,7 +94,10 @@ public class Server implements ServerInterface {
 	        // Add a shutdown hook to unbind the remote object and stop the registry
 	        Runtime.getRuntime().addShutdownHook(new Thread() {
 	            public void run() {
-	                try {
+                    registry.unbind("SaveDistant");
+                    UnicastRemoteObject.unexportObject(registry, true);
+                    System.out.println("Server stopped");
+	            	try {
 	                    registry.unbind("SaveDistant");
 	                    UnicastRemoteObject.unexportObject(registry, true);
 	                    System.out.println("Server stopped");
@@ -82,11 +112,10 @@ public class Server implements ServerInterface {
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
-        }		
+        }*/		
 	}
     
 /*
-    @Override
     public void saveDistant(String[] strings) throws RemoteException  {
     	try {
     		String filename = "test_rmi_save";
@@ -106,7 +135,6 @@ public class Server implements ServerInterface {
     	}
     }
     
-    @Override
     public String[] loadDistant() throws RemoteException {
         try {
             String filename = "test_rmi_save";
@@ -131,14 +159,6 @@ public class Server implements ServerInterface {
         }
     }
 */    
-	
-    public static boolean isServerRunning(String ip, int port) {
-        try (Socket socket = new Socket(ip, port)) {
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
 	
     public void saveDistant(String[] strings) throws RemoteException  {
         try {

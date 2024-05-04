@@ -92,34 +92,33 @@ public class FileManager {
         }
     }
     
-    public boolean saveDistantFile(ServerManager serverManager) throws IOException, NotConnectedException {
+    public boolean saveDistantFile(ServerManager serverManager) throws IOException, NotConnectedException, NumberFormatException, NotBoundException, AccessException, RemoteException, Exception  {
         if (!StateManager.getServerState()) {
             throw new NotConnectedException("Application is not connected to the server.");
         }
     	
-    	try {
-    		String[] serverConfig = serverManager.fetchServerConfig();
-    		String ip = serverConfig[0];
-    		try {
-    			int port = Integer.parseInt(serverConfig[1]);
-    			ServerInterface stub = (ServerInterface) Naming.lookup("rmi://" + ip + ":" + port + "/Server");
-                List<String> lines = new ArrayList<>();
-                if (panel.getBackgroundImage() == null) { // No image is used as a background
-                	lines.add("Background_Color: " + ((Color) panel.getBackground()).getRGB());
-                } else {
-                	lines.add("Background_Image: " + panel.getBackgroundImagePath());
-                }
+    	
+        String[] serverConfig = serverManager.fetchServerConfig();
+        String ip = serverConfig[0];
+        int port = Integer.parseInt(serverConfig[1]);
+        ServerInterface stub = (ServerInterface) Naming.lookup("rmi://" + ip + ":" + port + "/Server");
+        List<String> lines = new ArrayList<>();
+        if (panel.getBackgroundImage() == null) { // No image is used as a background
+        	lines.add("Background_Color: " + ((Color) panel.getBackground()).getRGB());
+        } else {
+        	lines.add("Background_Image: " + panel.getBackgroundImagePath());
+        }
 
-                List<GeneralShape> shapes = panel.getShapes();
-                for (GeneralShape shape : shapes) {
-                	lines.add(shape.toTextFormat());
-                }
+        List<GeneralShape> shapes = panel.getShapes();
+        for (GeneralShape shape : shapes) {
+        	lines.add(shape.toTextFormat());
+        }
 
-                stub.saveDistant(lines.toArray(new String[0]));
-                return true;
-    		} catch (NumberFormatException e1) {
+        stub.saveDistant(lines.toArray(new String[0]));
+        return true;
+    	 /*catch (NumberFormatException e1) {
 	            System.err.println("Could not parse string to an integer: " + e1.toString());
-		        return false;
+		        return false;/*
     		}
     		/*
     		int port = Integer.parseInt(serverConfig[1]);
@@ -142,7 +141,7 @@ public class FileManager {
             return true;
     		*/
 
-        } catch (NotBoundException e) {
+    	/*} catch (NotBoundException e) {
             System.err.println("The specified name is not bound in the RMI registry: " + e.getMessage());
             e.printStackTrace();
             return false;
@@ -158,7 +157,7 @@ public class FileManager {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
             return false;
-        }
+        }*/
     }
 
     /**
@@ -168,7 +167,7 @@ public class FileManager {
      * @throws FileNotFoundException If the file to open is not found.
      * @throws IOException If an I/O exception occurs during file reading.
      */
-    public boolean openFile() throws Exception, FileNotFoundException, IOException {
+    public boolean openFile() throws Exception, FileNotFoundException, IOException, NumberFormatException {
         JFileChooser fileChooser = new JFileChooser();
         int result = fileChooser.showOpenDialog(null);
 
@@ -183,14 +182,9 @@ public class FileManager {
                 String bgLine = reader.readLine();
                 if (bgLine != null) {
                     if (bgLine.startsWith("Background_Color: ")) {
-                    	try {
-                    		int rgb = Integer.parseInt(bgLine.substring(18));
-                    		Color bgColor = new Color(rgb);
-                    		panel.setBackground(bgColor);
-                    	} catch (NumberFormatException e1) {
-        		            System.err.println("Could not parse string to an integer: " + e1.toString());
-        			        return false;
-        		        }		
+                        int rgb = Integer.parseInt(bgLine.substring(18));
+                        Color bgColor = new Color(rgb);
+                        panel.setBackground(bgColor);
                     } else if (bgLine.startsWith("Background_Image: ")) {
                         String imagePath = bgLine.substring(18);
                         BufferedImage backgroundImage = ImageIO.read(new File(imagePath));
@@ -203,7 +197,6 @@ public class FileManager {
                 // Shapes
                 String line;
                 while ((line = reader.readLine()) != null) {
-
                     GeneralShape shape = GeneralShape.fromTextFormat(line);
                     if (shape != null) {
                         panel.addShape(shape);
@@ -225,7 +218,7 @@ public class FileManager {
     	try {
     		String[] serverConfig = serverManager.fetchServerConfig();
     		String ip = serverConfig[0];
-    		int port = Integer.parseInt(serverConfig[1]);
+    		int port = Integer.parseInt(serverConfig[1]); 
             //ServerInterface stub = (ServerInterface) Naming.lookup("rmi://localhost:1099/SaveDistant");
     		ServerInterface stub = (ServerInterface) Naming.lookup("rmi://" + ip + ":" + port + "/Server");
 

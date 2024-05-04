@@ -22,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.ImageIcon;
@@ -30,6 +31,9 @@ import javax.swing.JCheckBoxMenuItem;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 /**
  * @author Simon Antropius
@@ -162,6 +166,8 @@ public class MainWindow extends JFrame {
 		    		}
 		    	} catch (FileNotFoundException ex) {
 		    		helpText.setText("Error: Failed to restore file. FileNotFoundException occurred.");
+		    	} catch (NumberFormatException ex) {
+		    		helpText.setText("Error: Failed to restore file. NumberFormatException occurred.");
 		    	} catch (IOException ex) {
 	                helpText.setText("Error: Failed to restore file. IOException occurred.");
 	            } catch (Exception ex) {
@@ -174,24 +180,35 @@ public class MainWindow extends JFrame {
 		mnOpen.add(mntmOpenLocally);
 		
 		JMenuItem mntmOpenDistant = new JMenuItem("File on a distant machine");
-		mntmOpenDistant.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	panel.repaint();
-		    	try {
-		    		if (fileManager.openDistantFile(serverManager)) {
-		    			helpText.setText("File restored from the server.");
-		    			panel.repaint();
-		    		}
-		    	} catch (FileNotFoundException ex) {
-		    		helpText.setText("Error: Failed to restore file. FileNotFoundException occurred.");
-		    	} catch (IOException ex) {
-	                helpText.setText("Error: Failed to restore file. IOException occurred.");
-	            } catch (Exception ex) {
-	                helpText.setText("Error: Failed to restore file. Unknown error occurred.");
-	            }
-		    	
-		    }
-		});
+		
+			mntmOpenDistant.addActionListener(new ActionListener() {
+			    public void actionPerformed(ActionEvent e) {
+			    	if (StateManager.getServerState() == true) {
+			    		panel.repaint();
+			    		try {
+			    			if (fileManager.openDistantFile(serverManager)) {
+			    				helpText.setText("File restored from the server.");
+			    				panel.repaint();
+			    			}
+			    		} catch (FileNotFoundException ex) {
+			    			helpText.setText("Error: Failed to restore file. FileNotFoundException occurred.");
+			    		} catch (AccessException ex) {
+			    			helpText.setText("Error : Access to the required operation is denied. AccessException occured.");
+			    		} catch (RemoteException ex) {
+			    			helpText.setText("Error : Remote method invocation failed. RemoteException occured.");
+			    		} catch (IOException ex) {
+			    			helpText.setText("Error: Failed to restore file. IOException occurred.");
+			    		} catch (NotBoundException ex) {
+			    			helpText.setText("Error : The specified name is not bound in the RMI registry. NotBoundException occured.");
+			    		}  catch (Exception ex) {
+			    			helpText.setText("Error: Failed to restore file. Unknown error occurred.");
+			    		}
+			    	} else {
+			            JOptionPane.showMessageDialog(null, "Error: Application is not connected to a server.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+			    	}
+			    }
+			});
+		
 		mntmOpenDistant.setSelectedIcon(null);
 		mnOpen.add(mntmOpenDistant);
 		
@@ -224,19 +241,35 @@ public class MainWindow extends JFrame {
 		mnSaveFile.add(mntmSaveLocally);
 		
 		JMenuItem mntmSaveDistant = new JMenuItem("Save on a distant machine");
-		mntmSaveDistant.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	panel.repaint();
-		    	panel.setMousePressed(false);
-		    	try {
-		    		if (fileManager.saveDistantFile(serverManager)) {
-		                helpText.setText("File saved on a distant machine.");
-		    		}
-		    	} catch (Exception ex) {
-	                helpText.setText("Error: Failed to save file. Unknown error occurred.");
-	            }
-		    }
-		});
+		
+			mntmSaveDistant.addActionListener(new ActionListener() {
+			    public void actionPerformed(ActionEvent e) {
+			    	if (StateManager.getServerState() == true) {
+			    		panel.repaint();
+			    		panel.setMousePressed(false);
+			    	
+			    		try {
+			    			if (fileManager.saveDistantFile(serverManager)) {
+			    				helpText.setText("File saved on a distant machine.");
+			    			}
+			    		} catch (NotBoundException ex) {
+			                System.err.println("The specified name is not bound in the RMI registry: " + ex.getMessage());
+			                ex.printStackTrace();
+			            } catch (AccessException ex) {
+			                System.err.println("Access to the required operation is denied: " + ex.getMessage());
+			                ex.printStackTrace();
+			            } catch (RemoteException ex) {
+			                System.err.println("Remote method invocation failed: " + ex.getMessage());
+			                ex.printStackTrace();
+			            } catch (Exception ex) {
+			    			helpText.setText("Error: Failed to save file. Unknown error occurred.");
+			    		}
+			    	} else {
+		            JOptionPane.showMessageDialog(null, "Error: Application is not connected to a server.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+			    	}
+			    }
+			});
+
 		mntmSaveDistant.setSelectedIcon(null);
 		mnSaveFile.add(mntmSaveDistant);
 		
@@ -262,13 +295,20 @@ public class MainWindow extends JFrame {
 		JMenuItem mntmStartServer = new JMenuItem("Start Server");
 		mntmStartServer.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	if (serverManager.createServer()) {
-		    		StateManager.setServerState(true);
-		    		helpText.setText("Server started and online.");
-		    	} else {
-		            StateManager.setServerState(false);
-		            helpText.setText("Error while starting the server.");
-		    	}
+		    	try {
+		    		if (serverManager.createServer()) {
+			    		StateManager.setServerState(true);
+			    		helpText.setText("Server started and online.");
+			    	} else {
+			            StateManager.setServerState(false);
+			            helpText.setText("Error while starting the server.");
+			    	}
+		    	} catch (NumberFormatException e1) {
+		    		helpText.setText("Error: port number invalid. NumberFormatException occured.");
+	            } catch (Exception e1) {
+	            	helpText.setText("Error: server exception (while starting or stopping it).Unkown error occured.");
+				}
+		    	
 		    	
 		    	/*
 		        String portString = JOptionPane.showInputDialog("Enter a port number between 1024-65535 (default is 1099):");
@@ -291,14 +331,20 @@ public class MainWindow extends JFrame {
 		JMenuItem mntmConnectToServer = new JMenuItem("Connect to Server");
 		mntmConnectToServer.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	if (serverManager.connectServer()) {
-		    		StateManager.setServerState(true);
-		    		helpText.setText("Connected to server (ip:" + serverManager.fetchServerConfig()[0] + ", port:" + serverManager.fetchServerConfig()[1] + ").");
-		    	} else {
-		    		StateManager.setServerState(false);
-                	helpText.setText("Problem while connecting to the server (server not created or other problem).");
-		    	}
+		    	try {
+		    		if (serverManager.connectServer()) {
+			    		helpText.setText("Connected to server (ip:" + serverManager.fetchServerConfig()[0] + ", port:" + serverManager.fetchServerConfig()[1] + ").");
+		    		}
+		    	} catch (NumberFormatException e1) {
+		    		//System.err.println("Could not parse string to an integer: " + e1.toString());
+		    		helpText.setText("Error: port number invalid. NumberFormatException occured.");
+		    	}catch (IOException e1) {
+		    		helpText.setText("Error: server not created. IOException occured.");
+		    	}  catch (Exception ex) {
+	                helpText.setText("Error: Failed to restore file. Unknown error occurred.");
+	            }
 		    }
+		});
 		    
 		    	
 		        /*String ip = JOptionPane.showInputDialog("Enter the server IP address:");
@@ -311,8 +357,8 @@ public class MainWindow extends JFrame {
 		        } catch (NumberFormatException e1) {
 		            System.err.println("Could not parse string to an integer: " + e1.toString());
 		        }
-		    }*/
-		});
+		    }
+		});*/
 		mntmSaveAsImage.setSelectedIcon(null);
 		mnFile.add(mntmConnectToServer);
 		
