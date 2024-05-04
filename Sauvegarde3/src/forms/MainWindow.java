@@ -253,16 +253,13 @@ public class MainWindow extends JFrame {
 			    				helpText.setText("File saved on a distant machine.");
 			    			}
 			    		} catch (NotBoundException ex) {
-			                System.err.println("The specified name is not bound in the RMI registry: " + ex.getMessage());
-			                ex.printStackTrace();
+			                helpText.setText("Error: Failed to save file on the server. NotBoundException occurred.");
 			            } catch (AccessException ex) {
-			                System.err.println("Access to the required operation is denied: " + ex.getMessage());
-			                ex.printStackTrace();
+			            	helpText.setText("Error: Failed to save file on the server. AccessException occurred.");
 			            } catch (RemoteException ex) {
-			                System.err.println("Remote method invocation failed: " + ex.getMessage());
-			                ex.printStackTrace();
+			                helpText.setText("Error: Failed to save file on the server. RemoteException occurred.");
 			            } catch (Exception ex) {
-			    			helpText.setText("Error: Failed to save file. Unknown error occurred.");
+			    			helpText.setText("Error: Failed to save file on the server. Unknown error occurred.");
 			    		}
 			    	} else {
 		            JOptionPane.showMessageDialog(null, "Error: Application is not connected to a server.", "Connection Error", JOptionPane.ERROR_MESSAGE);

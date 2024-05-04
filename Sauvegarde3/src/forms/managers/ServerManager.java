@@ -18,7 +18,6 @@ public class ServerManager {
 	
 	public boolean createServer() throws Exception, NumberFormatException{
 		JPanel panel = new JPanel(new GridLayout(2, 2));
-        //String portString = JOptionPane.showInputDialog("Enter a port number between 1024-65535 (default is 1099):");
         JTextField portField = new JTextField("1099");
     	panel.add(new JLabel("Enter the server port number 1024-65535 (default is 1099):"));
     	panel.add(portField);

@@ -43,12 +43,7 @@ public class Server implements ServerInterface {
             registry.bind("Server", stub);
 
             System.out.println("Server ready on port " + port);
-            
-            /*
-            // Start the registry on the default port and bind the stub to it
-            Registry registry = LocateRegistry.createRegistry(1099);
-            registry.bind("ServerInterface", stub);
-			*/
+			
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
@@ -82,87 +77,11 @@ public class Server implements ServerInterface {
         });
         
         System.out.println("Server ready on port " + port);
-        /*try {
-            // Create and export the remote object
-            Server obj = new Server();
-            ServerInterface stub = (ServerInterface) UnicastRemoteObject.exportObject(obj, 0);
-
-            // Start the registry on the entered port and bind the stub to it
-            Registry registry = LocateRegistry.createRegistry(port);
-            registry.bind("Server", stub);
-			
-	        // Add a shutdown hook to unbind the remote object and stop the registry
-	        Runtime.getRuntime().addShutdownHook(new Thread() {
-	            public void run() {
-                    registry.unbind("SaveDistant");
-                    UnicastRemoteObject.unexportObject(registry, true);
-                    System.out.println("Server stopped");
-	            	try {
-	                    registry.unbind("SaveDistant");
-	                    UnicastRemoteObject.unexportObject(registry, true);
-	                    System.out.println("Server stopped");
-	                } catch (Exception e) {
-	                    System.err.println("Error stopping server: " + e.toString());
-	                }
-	            }
-	        });
-	        
-            System.out.println("Server ready on port " + port);
-			
-        } catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
-            e.printStackTrace();
-        }*/		
 	}
     
-/*
-    public void saveDistant(String[] strings) throws RemoteException  {
-    	try {
-    		String filename = "test_rmi_save";
-    		// Serialization
-    		FileOutputStream file = new FileOutputStream(filename);
-    		ObjectOutputStream out = new ObjectOutputStream(file);
-    		for (String str : strings) { // Save each object in the file
-    			out.writeObject(str);
-    		}
-
-    		out.close();
-    		file.close();
-    		
-    		
-    		}  catch (Exception e){
-    		throw new RemoteException("Error saving file", e);
-    	}
-    }
-    
-    public String[] loadDistant() throws RemoteException {
-        try {
-            String filename = "test_rmi_save";
-            List<String> lines = new ArrayList<>();
-
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
-                Object obj;
-                while ((obj = in.readObject()) != null) {
-                    if (obj instanceof String) {
-                        lines.add((String) obj);
-                    }
-                }
-            } catch (EOFException e) {
-                // End of file reached, do nothing
-            } catch (ClassNotFoundException e) {
-                throw new RemoteException("Error loading file", e);
-            }
-
-            return lines.toArray(new String[0]);
-        } catch (IOException e) {
-            throw new RemoteException("Error loading file", e);
-        }
-    }
-*/    
-	
     public void saveDistant(String[] strings) throws RemoteException  {
         try {
-            String filename = "test_rmi_save";
+            String filename = "shapeEditor-main/Sauvegarde3/ServerFiles/RMIfile1";
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
                 for (String str : strings) {
@@ -170,7 +89,6 @@ public class Server implements ServerInterface {
                     writer.newLine();
                 }
             }
-
         } catch (IOException e){
             throw new RemoteException("Error saving file", e);
         }
@@ -178,7 +96,7 @@ public class Server implements ServerInterface {
 
     public String[] loadDistant() throws RemoteException {
         try {
-            String filename = "test_rmi_save";
+            String filename = "shapeEditor-main/Sauvegarde3/ServerFiles/RMIfile1";
             List<String> lines = new ArrayList<>();
 
             try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
